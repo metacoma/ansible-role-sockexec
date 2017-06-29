@@ -1,0 +1,32 @@
+---
+# tasks file for sockexec
+
+# FIXME 
+- name: update packages
+  apk:
+    update_cache: true
+- name: Install build dependencies
+  apk:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "skalibs"
+    - "skalibs-dev"
+    - "git"
+    - "make"
+    - "build-base"
+
+- name: Download necessary source files
+  git:
+    repo: "https://github.com/jprjr/sockexec.git"
+    dest: "/tmp/sockexec"
+    clone: true
+    accept_hostkey: true
+
+- name: Build
+  command: "{{ item }}"
+  args:
+    chdir: "/tmp/sockexec"
+  with_items:
+    - "make"
+    - "make install"
